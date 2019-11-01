@@ -1,0 +1,70 @@
+---
+title: "prediction"
+author: "Saptarshi"
+date: "10/31/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading packages
+
+```{r, echo=TRUE}
+library(caret)
+library(rpart)
+library(rattle)
+```
+
+## Loading dataset
+
+
+data_train<-read.csv("pml-training.csv",TRUE,",")
+
+dim(data_train)
+
+data_test<- read.csv("pml-testing.csv",TRUE,",")
+
+
+
+## Create training and test
+
+
+training<- createDataPartition(data_train$classe,p=0.7)
+
+trained<- trained[,training]
+
+tested<- tested[,-training] 
+
+
+
+## removing first 7 columns because not reqd.
+
+training <- training[, -c(1:7)]
+
+
+## removing near zero var variables
+
+non_zero_var <- nearZeroVar(training)
+trained <- training[,-non_zero_var]
+
+
+## apply decision tree model on traindata
+
+set.seed(1234)
+decisionTree <- rpart(classe ~ ., data=trained, method="class")
+fancyRpartPlot(decisionTree)
+
+## Apply on test data
+
+predictTree <- predict(decisionTree, data_test, type = "class")
+
+## Check accuracy
+
+checktree <- confusionMatrix(predictTreeMod1, testData$classe)
+checktree
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
